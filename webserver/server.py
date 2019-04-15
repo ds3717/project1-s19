@@ -18,10 +18,11 @@ Read about it online.
 import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response, flash, session
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
+app.secret_key = 'some_secret'
 
 
 
@@ -36,8 +37,8 @@ app = Flask(__name__, template_folder=tmpl_dir)
 # For your convenience, we already set it to the class database
 
 # Use the DB credentials you received by e-mail
-DB_USER = "YOUR_DB_USERNAME_HERE"
-DB_PASSWORD = "YOUR_DB_PASSWORD_HERE"
+DB_USER = "bw2585"
+DB_PASSWORD = "a7TsIwBdEP"
 
 DB_SERVER = "w4111.cisxo09blonu.us-east-1.rds.amazonaws.com"
 
@@ -116,15 +117,37 @@ def index():
   # DEBUG: this is debugging code to see what request looks like
   print request.args
 
-
+  if not session.get('logged_in') or not session.get('user'):
+    return render_template('login.html')
+  else:
+    # return "Hello Boss!  <a href='/logout'>Logout</a>"
+    cmd = """
+    SELECT O.NO, O.time, F.item_name, F.restaurant_name, D.driver_id, O.food_score, O.driver_score
+    FROM Orders O, To_order T, Order_from F, Deliver D
+    WHERE O.NO = T.order_NO
+    AND O.NO = F.order_NO
+    AND O.NO = D.order_NO
+    AND T.customer_id = \'%s\'
+    """ % session['user']
+    print session['user']
+    cursor = g.conn.execute(cmd)
+    names = []
+    for result in cursor:
+      print result
+      names.append(list(result))  # can also be accessed using result[0]
+    print names
+    cursor.close()
+    context = dict(data=names)
+    return render_template('index.html', **context)
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM test")
-  names = []
-  for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
-  cursor.close()
+  # cursor = g.conn.execute("SELECT NO FROM Orders")
+  # names = []
+  # for result in cursor:
+  #   print result
+  #   names.append(result["no"])  # can also be accessed using result[0]
+  # cursor.close()
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -152,14 +175,13 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = names)
-
+  # context = dict(data = names)
 
   #
   # render_template looks in the templates/ folder for files.
   # for example, the below file reads template/index.html
   #
-  return render_template("index.html", **context)
+  # return render_template("index.html", **context)
 
 #
 # This is an example of a different path.  You can see it at
@@ -181,13 +203,76 @@ def add():
   print name
   cmd = 'INSERT INTO test(name) VALUES (:name1), (:name2)';
   g.conn.execute(text(cmd), name1 = name, name2 = name);
+  flash("success")
   return redirect('/')
 
+@app.route('/rate', methods=['POST'])
+def rate():
+  no = request.form['no']
+  f_score = float(request.form['food_score'])
+  d_score = float(request.form['driver_score'])
+  print no, f_score, d_score
+  cmd = """
+  UPDATE Orders
+SET food_score = %f,
+ driver_score = %f
+WHERE
+ Orders.NO = \'%s\'
+ """ %(f_score, d_score, no)
+  print cmd
+  g.conn.execute(text(cmd))
+  return redirect('/')
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    abort(401)
-    this_is_never_executed()
+  if request.method == 'GET':
+    return render_template('login.html')
+  else:
+    name = request.form['username']
+    passw = request.form['password']
+# try:
+#   name = "kb3467"
+#   passw = "Kobe Bryant"
+  cmd = "SELECT Count(1) FROM customer WHERE id = \'%s\' and password = \'%s\'" % (name, passw)
+  # cursor = g.conn.execute("SELECT NO FROM Orders")
+  # print cmd
+  cursor = g.conn.execute(cmd)
+  # print list(cursor)
+  r = False
+  for result in cursor:
+    if int(result[0]) > 0:
+      r = True
+  cursor.close()
+  if r == True:
+    flash("Log in success")
+    session['logged_in'] = True
+    session['user'] = name
+  else:
+    flash("Log in failure")
+  return index()
+  # except:
+  #   return "except"
+
+
+@app.route("/logout")
+def logout():
+  session['logged_in'] = False
+  return index()
+
+# @app.route('/login_test', methods=['POST'])
+# def do_admin_login():
+#   # if request.form['password'] == 'password' and request.form['username'] == 'admin':
+# #   #   flash('Login Successful!')
+# #   # else:
+# #   #   flash('wrong password!')
+# #   # return render_template("anotherfile.html")
+#   name = request.form['name']
+#   print name
+#   cmd = 'INSERT INTO test(name) VALUES (:name1), (:name2)';
+#   g.conn.execute(text(cmd), name1 = name, name2 = name);
+#   return redirect('/')
+
+
 
 
 if __name__ == "__main__":

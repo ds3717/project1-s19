@@ -1,4 +1,4 @@
-
+<!doctype html>
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul class=flashes>
@@ -8,4 +8,4 @@
     </ul>
   {% endif %}
 {% endwith %}
-hello, I am another file!
+{% block body %}{% endblock %}
