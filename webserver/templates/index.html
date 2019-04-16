@@ -1,39 +1,33 @@
 <html>
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-  <style>
-    body{ 
-      font-size: 15pt;
-      font-family: arial;
-    }
-  </style>
 
+<style>
+   body{ 
+     font-size: 15pt;
+     font-family: arial;
+	 background-color: #ADD8E6;
+   }
+	h1{position:absolute;   top: 10px;left: 525px;}
+	div{position: relative;top: 200px;left: 455px;}
+	p{position: relative;top: 350px;left: 455px;}
+</style>
 
 <body>
-  <a href='/logout'>Logout</a>
+  <a href='/logout'>
+	<input type="submit" value="logout">
+  </a>
+      <a href='/gotoindex'>
+	<input type="submit" value="personal center">
+  </a>
   <h1>YOUR HISTORY ORDERS</h1>
-{#  <div>{{data}}</div> #}
 
-{#  <div>#}
-{#    {% for n in data %}#}
-{#    <div>{{n}}</div>#}
-{#    {% endfor %}#}
-{#  </div>#}
   <div style="overflow-x:auto;">
-  <table>
-  <thead><tr><th>NO</th><th>time</th><th>item name</th><th>restaurant name</th><th>driver id</th><th>food score</th><th>driver score</th></tr></thead>
-  <tbody>
+  <table border="1">
+  <thead ><tr><th>NO</th><th>time</th><th>item name</th><th>restaurant name</th><th>driver id</th><th>food score</th><th>driver score</th></tr></thead>
+  <tbody >
   {% for n in data %}
-  <tr>
+  <tr >
       {% for j in n %}
-      <td>{{j}}</td>
+      <td >{{j}}</td>
       {% endfor %}
       </tr>
   {% endfor %}
@@ -41,10 +35,6 @@
   </table>
   </div>
 
-
-{#<form method="POST" action="/add">#}
-{#<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>#}
-{#</form>#}
 <form method="POST" action="/rate">
 <p>rate your orders:
 {#    <input type="text" name="no", placeholder="NO">#}
@@ -53,11 +43,26 @@
 <option value={{n[0]}}>{{n[0]}}</option>
   {% endfor %}
 </select>
-    <input type="number" name="food_score", placeholder="food score">
-    <input type="number" name="driver_score", placeholder="driver score">
+    <input type="number" name="food_score" min="1" max="5" value="3", placeholder="food score">
+    <input type="number" name="driver_score" min="1" max="5" value="3", placeholder="driver score">
     <input type="submit" value="Rate"></p>
 </form>
-<p><a href="/another">Go to the other page</a></p>
+
+
+  <form method="POST" action="/seedriver">
+<p>See Driver:
+{#    <input type="text" name="no", placeholder="NO">#}
+    <select name="driver_id">
+      {% for n in did %}
+<option value={{n}}>{{n}}</option>
+  {% endfor %}
+</select>
+    <input type="submit" value="See"></p>
+</form>
+
+<p><a href="/gotoorder">
+	<input type="submit" value="Go to the order page">
+</a></p>
 </body>
 
 

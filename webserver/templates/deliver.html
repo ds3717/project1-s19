@@ -1,0 +1,75 @@
+<html>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+	  background-color: #ADD8E6;
+    }
+	h1{font-size: 30pt;position:absolute;   top: 20px;left:630px;}
+	div{position: relative;top: 180px;left: 515px;}
+	p{position: relative;top: 300px;left: 485px;}
+  </style>
+
+
+<body>
+  <a href='/logout'>
+	<input type="submit" value="logout">
+  </a>
+      <a href='/gotoindex'>
+	<input type="submit" value="personal center">
+  </a>
+  <p>Deliver History</p>
+
+
+
+  <div style="overflow-x:auto;">
+  <table border="1">
+  <thead><tr><th>Order Number</th><th>Order Time</th><th>Deliver Time</th><th>Deliver Score</th></thead>
+  <tbody>
+  {% for n in deliver %}
+  <tr>
+      {% for j in n %}
+      <td>{{j}}</td>
+      {% endfor %}
+      </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+  </div>
+
+<p>Driver Info</p>
+  <div style="overflow-x:auto;">
+  <table border="1">
+  <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Company</th><th>Company Location</th></thead>
+  <tbody>
+
+  <tr>
+  {% for n in data %}
+      {% for j in n %}
+      <td>{{j}}</td>
+      {% endfor %}
+    {% endfor %}
+      </tr>
+
+  </tbody>
+  </table>
+  </div>
+
+
+<p><a href="/gotoorder">
+	<input type="submit" value="Go to Order">
+</a></p>
+</body>
+
+
+</html>

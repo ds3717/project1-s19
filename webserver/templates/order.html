@@ -1,0 +1,81 @@
+<html>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+	  background-color: #ADD8E6;
+    }
+	h1{font-size: 30pt;position:absolute;   top: 20px;left:630px;}
+	div{position: relative;top: 180px;left: 515px;}
+	p{position: relative;top: 300px;left: 485px;}
+  </style>
+
+
+<body>
+  <a href='/logout'>
+	<input type="submit" value="logout">
+  </a>
+    <a href='/gotoindex'>
+	<input type="submit" value="personal center">
+  </a>
+  <h1>Restaurants</h1>
+
+
+  <div style="overflow-x:auto;">
+  <table border="1">
+  <thead><tr><th>Restaurant Name</th><th>Location</th><th>boss</th><th>rating</th></thead>
+  <tbody>
+  {% for n in data %}
+  <tr>
+      {% for j in n %}
+      <td>{{j}}</td>
+      {% endfor %}
+      </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+  </div>
+
+    <form method="POST" action="/filterlocation">
+<p>filter by location:
+    <select name="state">
+<option value="NY">NY</option>
+<option value="DC">DC</option>
+<option value="NJ">NJ</option>
+</select>
+    <input type="submit" value="filter"></p>
+</form>
+
+      <form method="POST" action="/searchrestaurant">
+<p>search restaurant name:
+<input type="text" name="key" value="NYC">
+    <input type="submit" value="search"></p>
+</form>
+<form method="POST" action="/torestaurant">
+<p>choose restaurant:
+    <select name="name">
+      {% for n in data %}
+<option value={{n[0]}}>{{n[0]}}</option>
+  {% endfor %}
+</select>
+    <input type="submit" value="choose"></p>
+</form>
+
+
+<p><a href="/gotoorder">
+	<input type="submit" value="clear filter">
+</a></p>
+</body>
+
+
+</html>

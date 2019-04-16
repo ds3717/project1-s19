@@ -1,0 +1,59 @@
+<html>
+
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+	  background-color: #ADD8E6;
+    }
+	h1{font-size: 30pt;position:absolute;   top: 30px;left:560px;}
+	div{position: relative;top: 200px;left: 565px;}
+	p{position: relative;top: 300px;left: 505px;}
+  </style>
+
+
+<body>
+  <a href='/logout'>
+	<input type="submit" value="logout">
+  </a>
+      <a href='/gotoindex'>
+	<input type="submit" value="personal center">
+  </a>
+  <h1>Restaurant Menu</h1>
+  <div style="overflow-x:auto;">
+  <table border="1">
+  <thead><tr><th>Restaurant Name</th><th>item</th><th>price</th><th>ratings</th></thead>
+  <tbody>
+  {% for n in data %}
+  <tr>
+      {% for j in n %}
+      <td>{{j}}</td>
+      {% endfor %}
+      </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+  </div>
+
+
+<form method="POST" action="/pay">
+<p>choose item:
+    <select name="restaurant name">
+<option value={{data[0][0]}}>{{data[0][0]}}</option>
+</select>
+    <select name="item name">
+      {% for n in data %}
+<option value={{n[1]}}>{{n[1]}}</option>
+  {% endfor %}
+</select>
+    <input type="submit" value="pay"></p>
+</form>
+
+
+<p><a href="/gotoorder">
+	<input type="submit" value="Go to the order page">
+</a></p>
+</body>
+
+
+</html>
