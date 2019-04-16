@@ -144,61 +144,7 @@ def index():
         driver_id.append(i[4])
     context = dict(data=names, did=driver_id)
     return render_template('index.html', **context)
-  #
-  # example of a database query
-  #
-  # cursor = g.conn.execute("SELECT NO FROM Orders")
-  # names = []
-  # for result in cursor:
-  #   print result
-  #   names.append(result["no"])  # can also be accessed using result[0]
-  # cursor.close()
 
-  #
-  # Flask uses Jinja templates, which is an extension to HTML where you can
-  # pass data to a template and dynamically generate HTML based on the data
-  # (you can think of it as simple PHP)
-  # documentation: https://realpython.com/blog/python/primer-on-jinja-templating/
-  #
-  # You can see an example template in templates/index.html
-  #
-  # context are the variables that are passed to the template.
-  # for example, "data" key in the context variable defined below will be 
-  # accessible as a variable in index.html:
-  #
-  #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-  #     <div>{{data}}</div>
-  #     
-  #     # creates a <div> tag for each element in data
-  #     # will print: 
-  #     #
-  #     #   <div>grace hopper</div>
-  #     #   <div>alan turing</div>
-  #     #   <div>ada lovelace</div>
-  #     #
-  #     {% for n in data %}
-  #     <div>{{n}}</div>
-  #     {% endfor %}
-  #
-  # context = dict(data = names)
-
-  #
-  # render_template looks in the templates/ folder for files.
-  # for example, the below file reads template/index.html
-  #
-  # return render_template("index.html", **context)
-
-#
-# This is an example of a different path.  You can see it at
-# 
-#     localhost:8111/another
-#
-# notice that the functio name is another() rather than index()
-# the functions for each app.route needs to have different names
-#
-@app.route('/another')
-def another():
-  return render_template("anotherfile.html")
 
 @app.route('/gotoregister')
 def gotoregister():
@@ -288,9 +234,6 @@ def searchrestaurant():
   AND R.name LIKE %s
   Order BY S.rating DESC"""
   print cmd
-  # sql = "SELECT * FROM things WHERE description LIKE %(like)s ESCAPE '='"
-  # cursor.execute(sql, dict(like='%' + term + '%'))
-  # cursor = g.conn.execute(cmd, ('%'+st+'% ',))
   cursor = g.conn.execute(cmd, ('%'+st+'%',))
   names = []
   for result in cursor:
@@ -414,20 +357,6 @@ def pay():
   """
   cursor = g.conn.execute(cmd_deliver, (str(new_id), str(hour) + ":" + str(minute + 15), driver_ids[driver_idx]))
   cursor.close()
-
-#   no = request.form['no']
-#   f_score = float(request.form['food_score'])
-#   d_score = float(request.form['driver_score'])
-#   print no, f_score, d_score
-#   cmd = """
-#   UPDATE Orders
-# SET food_score = %f,
-#  driver_score = %f
-# WHERE
-#  Orders.NO = \'%s\'
-#  """ %(f_score, d_score, no)
-#   print cmd
-#   g.conn.execute(text(cmd))
   return redirect('/')
 
 
@@ -517,19 +446,6 @@ def register():
 def logout():
   session['logged_in'] = False
   return index()
-
-# @app.route('/login_test', methods=['POST'])
-# def do_admin_login():
-#   # if request.form['password'] == 'password' and request.form['username'] == 'admin':
-# #   #   flash('Login Successful!')
-# #   # else:
-# #   #   flash('wrong password!')
-# #   # return render_template("anotherfile.html")
-#   name = request.form['name']
-#   print name
-#   cmd = 'INSERT INTO test(name) VALUES (:name1), (:name2)';
-#   g.conn.execute(text(cmd), name1 = name, name2 = name);
-#   return redirect('/')
 
 
 
