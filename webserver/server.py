@@ -483,7 +483,6 @@ def login():
       r = True
   cursor.close()
   if r == True:
-    flash("Log in success")
     session['logged_in'] = True
     session['user'] = name
   else:
